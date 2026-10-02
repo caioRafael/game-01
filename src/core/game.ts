@@ -11,7 +11,7 @@ export class Game{
 
     start(){
         const renderer = new RendererService(this.canvas);
-        const input = new InputService();
+        const input = new InputService(this.canvas);
         let scene: Scene = new InitialScene();
         renderer.setCurrentScene(scene);
 

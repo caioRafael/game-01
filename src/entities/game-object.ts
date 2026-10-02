@@ -40,6 +40,10 @@ export class GameObject {
         return this.color;
     }
 
+    setColor(color: string){
+        this.color = color;
+    }
+
     render(ctx: CanvasRenderingContext2D){
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
