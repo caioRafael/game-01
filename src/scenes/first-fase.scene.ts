@@ -1,8 +1,8 @@
-import type { InputService } from "../engine/inputs/input.service";
-import { Scene, type GameContext } from "../entities/scene";
-import { Player } from "../entities/player";
-import { GameObject } from "../entities/game-object";
-import { Collision } from "../engine/physics/collision";
+import type { InputService } from "@engine/inputs/input.service";
+import { Scene, type GameContext } from "@entities/scene";
+import { Player } from "@entities/player";
+import { GameObject } from "@entities/game-object";
+import { Collision } from "@engine/physics/collision";
 import { InitialScene } from "./initial.scene";
 
 export class FirstFaseScene extends Scene {
@@ -11,13 +11,19 @@ export class FirstFaseScene extends Scene {
     private placed = false;
 
     private player: Player = new Player(this.x, this.y, 100, 100); 
-    private door: GameObject = new GameObject(this.x, this.y, 100, 100, "blue", true);
+    private door: GameObject = new GameObject(this.x, this.y, 100, 100, "blue", false);
 
     update(dt: number, input: InputService, game: GameContext): void {
+        const playerPreviousPosition = this.player.getPosition();
         this.player.update(dt, input, game);
         if (Collision.checkCollision(this.player, this.door)) {
             console.log("Colisão detectada");
-            game.changeScene(new InitialScene());
+            if (this.door.getIsTrigger()) {
+                game.changeScene(new InitialScene());
+                return;
+            }
+
+            this.player.setPosition(playerPreviousPosition.x, playerPreviousPosition.y);
         }
     }
 

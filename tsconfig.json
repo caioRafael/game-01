@@ -23,7 +23,14 @@
     "skipLibCheck": true,
 
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+
+    "paths": {
+      "@core/*": ["./src/core/*"],
+      "@engine/*": ["./src/engine/*"],
+      "@entities/*": ["./src/entities/*"],
+      "@scenes/*": ["./src/scenes/*"]
+    }
   },
   "include": ["src"]
 }

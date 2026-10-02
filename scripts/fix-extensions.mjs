@@ -17,26 +17,53 @@ function javascriptFiles(dir) {
 
 const loadableExtension = /\.(?:js|mjs|cjs|json|css|wasm)$/;
 
+const aliasPrefixes = [
+  ["@core/", "core/"],
+  ["@engine/", "engine/"],
+  ["@entities/", "entities/"],
+  ["@scenes/", "scenes/"],
+];
+
+function aliasToRelative(fromFile, specifier) {
+  let mapped = null;
+  for (const [prefix, folder] of aliasPrefixes) {
+    if (specifier.startsWith(prefix)) {
+      mapped = folder + specifier.slice(prefix.length);
+      break;
+    }
+  }
+  if (mapped === null) return specifier;
+  mapped = mapped.replace(/\.tsx?$/, "");
+  const absoluteTarget = path.join(distDir, mapped);
+  let relative = path.relative(path.dirname(fromFile), absoluteTarget);
+  relative = relative.split(path.sep).join("/");
+  if (!relative.startsWith(".")) relative = `./${relative}`;
+  return relative;
+}
+
 function withJavaScriptExtension(fromFile, specifier) {
   if (loadableExtension.test(specifier)) return specifier;
-  const target = path.resolve(path.dirname(fromFile), specifier);
-  if (existsSync(`${target}.js`)) return `${specifier}.js`;
+  const relative = aliasToRelative(fromFile, specifier);
+  const target = path.resolve(path.dirname(fromFile), relative);
+  if (existsSync(`${target}.js`)) return `${relative}.js`;
   if (existsSync(path.join(target, "index.js"))) {
-    return `${specifier.replace(/\/$/, "")}/index.js`;
+    return `${relative.replace(/\/$/, "")}/index.js`;
   }
-  return `${specifier}.js`;
+  return `${relative}.js`;
 }
+
+const localSpecifier = String.raw`((?:\.{1,2}\/|@(?:core|engine|entities|scenes)\/)[^"']+)`;
 
 function rewriteImports(file, source) {
   const rewrite = (specifier) => withJavaScriptExtension(file, specifier);
   return source
-    .replace(/\bfrom\s+(["'])(\.{1,2}\/[^"']+)\1/g, (_, quote, specifier) => {
+    .replace(new RegExp(String.raw`\bfrom\s+(["'])${localSpecifier}\1`, "g"), (_, quote, specifier) => {
       return `from ${quote}${rewrite(specifier)}${quote}`;
     })
-    .replace(/\bimport\s*\(\s*(["'])(\.{1,2}\/[^"']+)\1/g, (_, quote, specifier) => {
+    .replace(new RegExp(String.raw`\bimport\s*\(\s*(["'])${localSpecifier}\1`, "g"), (_, quote, specifier) => {
       return `import(${quote}${rewrite(specifier)}${quote}`;
     })
-    .replace(/\bimport\s+(["'])(\.{1,2}\/[^"']+)\1/g, (_, quote, specifier) => {
+    .replace(new RegExp(String.raw`\bimport\s+(["'])${localSpecifier}\1`, "g"), (_, quote, specifier) => {
       return `import ${quote}${rewrite(specifier)}${quote}`;
     });
 }

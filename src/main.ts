@@ -1,7 +1,7 @@
 // 1- conectar a tag canva
 
-import { Game } from "./core/game";
-import { RendererService } from "./engine/renderer/renderer.service";
+import { Game } from "@core/game";
+import { RendererService } from "@engine/renderer/renderer.service";
 
 // 2- apresentar um objeto na tela
 

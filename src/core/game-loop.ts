@@ -1,6 +1,6 @@
-import type { GameContext, Scene } from "../entities/scene";
-import type { InputService } from "../engine/inputs/input.service";
-import type { RendererService } from "../engine/renderer/renderer.service";
+import type { GameContext, Scene } from "@entities/scene";
+import type { InputService } from "@engine/inputs/input.service";
+import type { RendererService } from "@engine/renderer/renderer.service";
 
 export function GameLoop(renderer: RendererService, getScene: () => Scene, input: InputService, game: GameContext){
     let last = performance.now();

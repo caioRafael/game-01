@@ -1,4 +1,4 @@
-import type { InputService } from "../engine/inputs/input.service";
+import type { InputService } from "@engine/inputs/input.service";
 
 export interface GameContext{
     changeScene (scene: Scene): void;

@@ -1,4 +1,4 @@
-import type { Scene } from "../../entities/scene";
+import type { Scene } from "@entities/scene";
 
 export class RendererService {
     private currentScene: Scene | null = null;

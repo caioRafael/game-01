@@ -1,6 +1,6 @@
-import { Key } from "../engine/inputs/key";
-import type { InputService } from "../engine/inputs/input.service";
-import { Scene, type GameContext } from "../entities/scene";
+import { Key } from "@engine/inputs/key";
+import type { InputService } from "@engine/inputs/input.service";
+import { Scene, type GameContext } from "@entities/scene";
 import { FirstFaseScene } from "./first-fase.scene";
 
 export class InitialScene extends Scene {

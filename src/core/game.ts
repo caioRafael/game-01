@@ -1,7 +1,7 @@
-import type { GameContext, Scene } from "../entities/scene";
-import { InputService } from "../engine/inputs/input.service";
-import { RendererService } from "../engine/renderer/renderer.service";
-import { InitialScene } from "../scenes/initial.scene";
+import type { GameContext, Scene } from "@entities/scene";
+import { InputService } from "@engine/inputs/input.service";
+import { RendererService } from "@engine/renderer/renderer.service";
+import { InitialScene } from "@scenes/initial.scene";
 import { GameLoop } from "./game-loop";
 
 export class Game{

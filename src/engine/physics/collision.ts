@@ -1,4 +1,4 @@
-import type { GameObject } from "../../entities/game-object";
+import type { GameObject } from "@entities/game-object";
 
 export class Collision {
     static checkCollision(object1: GameObject, object2: GameObject): boolean {

@@ -1,5 +1,5 @@
-import type { InputService } from "../engine/inputs/input.service";
-import { Key } from "../engine/inputs/key";
+import type { InputService } from "@engine/inputs/input.service";
+import { Key } from "@engine/inputs/key";
 import type { GameContext } from "./scene";
 import { GameObject } from "./game-object";
 
