@@ -91,7 +91,32 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(import.met
       if (chunk.toString().includes("Watching for file changes")) schedule();
     });
 
-    tsc.on("exit", (code) => process.exit(code ?? 0));
+    const server = spawn(process.execPath, ["--watch", path.resolve("dist/server/dev-server.js")], {
+      stdio: "inherit",
+    });
+
+    const stop = () => {
+      tsc.kill("SIGTERM");
+      server.kill("SIGTERM");
+    };
+
+    process.on("SIGINT", () => {
+      stop();
+      process.exit(0);
+    });
+    process.on("SIGTERM", () => {
+      stop();
+      process.exit(0);
+    });
+
+    tsc.on("exit", (code) => {
+      server.kill("SIGTERM");
+      process.exit(code ?? 0);
+    });
+    server.on("exit", (code) => {
+      tsc.kill("SIGTERM");
+      process.exit(code ?? 0);
+    });
   } else {
     fixExtensions();
   }
