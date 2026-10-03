@@ -8,6 +8,7 @@ export function GameLoop(renderer: RendererService, getScene: () => Scene, input
         const dt = Math.min((now - last) / 1000, 0.05);
         last = now;
         getScene().update(dt, input, game);
+        input.consumeTypedKeys();
         renderer.render();
         requestAnimationFrame(loop);
     };

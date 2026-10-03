@@ -5,11 +5,16 @@ import type { MouseButton } from "./mouse"
 export class InputService {
 
     private keys = new Set<string>()
+    private typedKeys: string[] = []
     private buttons = new Set<number>()
     private mouse = { x: 0, y: 0 }
 
     private handleKeyDown = (event: KeyboardEvent) => {
         this.keys.add(event.code)
+        if (event.key === "Backspace" || event.key.length === 1) {
+            this.typedKeys.push(event.key)
+            event.preventDefault()
+        }
     }
 
     private handleKeyUp = (event: KeyboardEvent) => {
@@ -62,6 +67,12 @@ export class InputService {
 
     isPressed(key: Key){
         return this.keys.has(key)
+    }
+
+    consumeTypedKeys(): string[] {
+        const keys = this.typedKeys
+        this.typedKeys = []
+        return keys
     }
 
     destroy(){

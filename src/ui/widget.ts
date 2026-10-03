@@ -12,6 +12,15 @@ export abstract class Widget {
         return px >= this.x && px <= this.x + this.width && py >= this.y && py <= this.y + this.height;
     }
 
+    setPosition(x: number, y: number): void {
+        this.x = x;
+        this.y = y;
+    }
+
+    getPosition(): { x: number, y: number } {
+        return { x: this.x, y: this.y };
+    }
+
     abstract update(input: InputService): void;
 
     abstract render(ctx: CanvasRenderingContext2D): void;

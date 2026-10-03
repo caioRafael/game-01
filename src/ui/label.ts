@@ -22,7 +22,7 @@ export class Label extends Widget {
     }
 
     update(input: InputService): void {
-        throw new Error("Method not implemented.");
+        return;
     }
 
     render(ctx: CanvasRenderingContext2D): void {

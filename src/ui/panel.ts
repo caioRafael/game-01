@@ -3,6 +3,7 @@ import { Widget } from "./widget";
 
 export class Panel extends Widget {
     private backgroundColor: string = "white";
+    private children: { widget: Widget, x: number, y: number }[] = [];
 
     constructor(
         x: number,
@@ -15,12 +16,37 @@ export class Panel extends Widget {
         this.backgroundColor = backgroundColor;
     }
 
+    addChild(child: Widget): void {
+        this.children.push({
+            widget: child,
+            x: this.x + child.getPosition().x,
+            y: this.y + child.getPosition().y,
+        });
+    }
+
+    layout(): void {
+        for (const child of this.children) {
+            child.widget.setPosition(child.x, child.y);
+        }
+    }
+
     update(input: InputService): void {
-        throw new Error("Method not implemented.");
+       this.layout();
+       for (const child of this.children) {
+        child.widget.update(input);
+       }
+    }
+
+    private renderChildren(ctx: CanvasRenderingContext2D): void {
+        for (const child of this.children) {
+            child.widget.render(ctx);
+        }
     }
 
     render(ctx: CanvasRenderingContext2D): void {
+        this.layout();
         ctx.fillStyle = this.backgroundColor;
         ctx.fillRect(this.x, this.y, this.width, this.height);
+        this.renderChildren(ctx);
     }
 }
