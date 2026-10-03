@@ -5,6 +5,9 @@ import { GameObject } from "@entities/game-object";
 import { Collision } from "@engine/physics/collision";
 import { InitialScene } from "./initial.scene";
 import { MouseButton } from "@engine/inputs/mouse";
+import { Anchor } from "@ui/anchor";
+import { Button, TextAlign } from "@ui/button";
+import { Label } from "@ui/label";
 
 export class FirstFaseScene extends Scene {
     private x = 0;
@@ -13,11 +16,27 @@ export class FirstFaseScene extends Scene {
 
     private doorColor = "blue";
 
+    private backButton: Button = new Button(0, 0, 50, 50, "Back", "16px Arial", "white", "blue")
+        .setAnchor(Anchor.TOP_LEFT, 20, 20);
+    private label: Label = new Label(0, 0, 220, 32, "Player:", "16px Arial", "white", TextAlign.RIGHT)
+        .setAnchor(Anchor.TOP_RIGHT, -16, 24);
+
     private player: Player = new Player(this.x, this.y, 100, 100); 
     private door: GameObject = new GameObject(this.x, this.y, 100, 100, this.doorColor, false);
 
+    
+    layout(width: number, height: number): void {
+        this.backButton.place(0, 0, width, height);
+        this.label.place(0, 0, width, height);
+    }
+
     update(dt: number, input: InputService, game: GameContext): void {
         const playerPreviousPosition = this.player.getPosition();
+        this.label.setText(`Player: ${game.session.playerName}`);
+        this.backButton.setOnClick(() => {
+            game.changeScene(new InitialScene());
+        });
+        this.backButton.update(input);
         this.player.update(dt, input, game);
         if (Collision.checkCollision(this.player, this.door)) {
             console.log("Colisão detectada");
@@ -54,6 +73,8 @@ export class FirstFaseScene extends Scene {
 
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, width, height);
+        this.backButton.render(ctx);
+        this.label.render(ctx);
         this.player.render(ctx);
         this.door.render(ctx);
     }

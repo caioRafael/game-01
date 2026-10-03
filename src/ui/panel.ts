@@ -17,21 +17,30 @@ export class Panel extends Widget {
     }
 
     addChild(child: Widget): void {
+        const position = child.getPosition();
         this.children.push({
             widget: child,
-            x: this.x + child.getPosition().x,
-            y: this.y + child.getPosition().y,
+            x: position.x,
+            y: position.y,
         });
     }
 
-    layout(): void {
+    place(parentX: number, parentY: number, parentWidth: number, parentHeight: number): void {
+        super.place(parentX, parentY, parentWidth, parentHeight);
+        this.placeChildren();
+    }
+
+    private placeChildren(): void {
         for (const child of this.children) {
-            child.widget.setPosition(child.x, child.y);
+            if (!child.widget.hasAnchor()) {
+                child.widget.setPosition(this.x + child.x, this.y + child.y);
+            }
+            child.widget.place(this.x, this.y, this.width, this.height);
         }
     }
 
     update(input: InputService): void {
-       this.layout();
+       this.placeChildren();
        for (const child of this.children) {
         child.widget.update(input);
        }
@@ -44,7 +53,7 @@ export class Panel extends Widget {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        this.layout();
+        this.placeChildren();
         ctx.fillStyle = this.backgroundColor;
         ctx.fillRect(this.x, this.y, this.width, this.height);
         this.renderChildren(ctx);

@@ -8,11 +8,17 @@ export class RendererService {
         window.addEventListener("resize", () => this.render());
     }
 
+    getViewSize(): { width: number; height: number } {
+        return {
+            width: this.canvas.clientWidth,
+            height: this.canvas.clientHeight,
+        };
+    }
+
     // Função para renderizar o canvas
     render() {
         const pixelRatio = window.devicePixelRatio || 1;
-        const width = this.canvas.clientWidth;
-        const height = this.canvas.clientHeight;
+        const { width, height } = this.getViewSize();
 
         this.canvas.width = Math.floor(width * pixelRatio);
         this.canvas.height = Math.floor(height * pixelRatio);
@@ -26,6 +32,7 @@ export class RendererService {
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, width, height);
 
+        this.currentScene?.layout(width, height);
         this.currentScene?.render(ctx, width, height);
     }
 

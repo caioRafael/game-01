@@ -16,6 +16,9 @@ export class Game{
         renderer.setCurrentScene(scene);
 
         const game: GameContext = {
+            session: {
+                playerName: "",
+            },
             changeScene(next) {
                 if (scene.constructor === next.constructor) return;
                 scene = next;

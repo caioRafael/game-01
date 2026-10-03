@@ -7,7 +7,10 @@ export function GameLoop(renderer: RendererService, getScene: () => Scene, input
     const loop = (now: number) => {
         const dt = Math.min((now - last) / 1000, 0.05);
         last = now;
-        getScene().update(dt, input, game);
+        const scene = getScene();
+        const view = renderer.getViewSize();
+        scene.layout(view.width, view.height);
+        scene.update(dt, input, game);
         input.consumeTypedKeys();
         renderer.render();
         requestAnimationFrame(loop);
