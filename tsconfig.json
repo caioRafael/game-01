@@ -30,7 +30,8 @@
       "@core/*": ["./src/core/*"],
       "@engine/*": ["./src/engine/*"],
       "@entities/*": ["./src/entities/*"],
-      "@scenes/*": ["./src/scenes/*"]
+      "@scenes/*": ["./src/scenes/*"],
+      "@ui/*": ["./src/ui/*"]
     }
   },
   "include": ["src"]

@@ -22,6 +22,7 @@ const aliasPrefixes = [
   ["@engine/", "engine/"],
   ["@entities/", "entities/"],
   ["@scenes/", "scenes/"],
+  ["@ui/", "ui/"],
 ];
 
 function aliasToRelative(fromFile, specifier) {
@@ -52,7 +53,7 @@ function withJavaScriptExtension(fromFile, specifier) {
   return `${relative}.js`;
 }
 
-const localSpecifier = String.raw`((?:\.{1,2}\/|@(?:core|engine|entities|scenes)\/)[^"']+)`;
+const localSpecifier = String.raw`((?:\.{1,2}\/|@(?:core|engine|entities|scenes|ui)\/)[^"']+)`;
 
 function rewriteImports(file, source) {
   const rewrite = (specifier) => withJavaScriptExtension(file, specifier);
