@@ -1,3 +1,4 @@
+import type { CameraService } from "@engine/camera/camera.service";
 import type { InputService } from "@engine/inputs/input.service";
 import { Scene, type GameContext } from "@entities/scene";
 import { Player } from "@entities/player";
@@ -13,6 +14,9 @@ export class FirstFaseScene extends Scene {
     private x = 0;
     private y = 0;
     private placed = false;
+    private viewWidth = 0;
+    private viewHeight = 0;
+    private camera: CameraService | null = null;
 
     private doorColor = "blue";
 
@@ -23,14 +27,22 @@ export class FirstFaseScene extends Scene {
 
     private player: Player = new Player(this.x, this.y, 100, 100); 
     private door: GameObject = new GameObject(this.x, this.y, 100, 100, this.doorColor, false);
+    private obstacles: { object: GameObject, color: string }[] = ["orange", "purple", "teal", "yellow", "brown"].map((color) => ({
+        object: new GameObject(0, 0, 100, 100, color, false),
+        color,
+    }));
 
     
     layout(width: number, height: number): void {
+        this.viewWidth = width;
+        this.viewHeight = height;
         this.backButton.place(0, 0, width, height);
         this.label.place(0, 0, width, height);
     }
 
     update(dt: number, input: InputService, game: GameContext): void {
+        this.camera = game.camera;
+        this.camera.setViewSize(this.viewWidth, this.viewHeight);
         const playerPreviousPosition = this.player.getPosition();
         this.label.setText(`Player: ${game.session.playerName}`);
         this.backButton.setOnClick(() => {
@@ -38,26 +50,42 @@ export class FirstFaseScene extends Scene {
         });
         this.backButton.update(input);
         this.player.update(dt, input, game);
-        if (Collision.checkCollision(this.player, this.door)) {
+        const blocks = [this.door, ...this.obstacles.map((obstacle) => obstacle.object)];
+        for (const block of blocks) {
+            if (!Collision.checkCollision(this.player, block)) continue;
             console.log("Colisão detectada");
-            if (this.door.getIsTrigger()) {
+            if (block.getIsTrigger()) {
                 game.changeScene(new InitialScene());
                 return;
             }
 
             this.player.setPosition(playerPreviousPosition.x, playerPreviousPosition.y);
+            break;
         }
 
-        if(input.mouseHovering(this.door)) {
+        game.camera.follow(this.player);
+        game.camera.update();
+
+        const mouse = input.getMousePosition();
+        const world = game.camera.screenToWorld(mouse.x, mouse.y);
+
+        if(input.mouseHovering(this.door, world)) {
             this.door.setColor("gray");
         } else {
             this.door.setColor(this.doorColor);
         }
 
+        for (const obstacle of this.obstacles) {
+            if (input.mouseHovering(obstacle.object, world)) {
+                obstacle.object.setColor("gray");
+            } else {
+                obstacle.object.setColor(obstacle.color);
+            }
+        }
+
         if(input.isMousePressed(MouseButton.LEFT)) {
             console.log("Mouse pressionado");
-            const mousePosition = input.getMousePosition();
-            console.log("Mouse position: ", mousePosition);
+            console.log("Mouse position: ", world);
         }
     }
 
@@ -68,14 +96,29 @@ export class FirstFaseScene extends Scene {
             this.y = height / 2;
             this.player.setPosition(this.x, this.y);
             this.door.setPosition(this.x + 100, this.y + 100);
+            for (const obstacle of this.obstacles) {
+                const object = obstacle.object;
+                object.setPosition(
+                    Math.random() * Math.max(0, width - object.getWidth()),
+                    Math.random() * Math.max(0, height - object.getHeight()),
+                );
+            }
             this.placed = true;
         }
 
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, width, height);
-        this.backButton.render(ctx);
-        this.label.render(ctx);
+
+        ctx.save();
+        this.camera?.apply(ctx);
         this.player.render(ctx);
         this.door.render(ctx);
+        for (const obstacle of this.obstacles) {
+            obstacle.object.render(ctx);
+        }
+        ctx.restore();
+
+        this.backButton.render(ctx);
+        this.label.render(ctx);
     }
 }

@@ -1,10 +1,12 @@
 import type { InputService } from "@engine/inputs/input.service";
+import type { CameraService } from "@engine/camera/camera.service";
 
 export interface GameSession {
     playerName: string;
 }
 
 export interface GameContext{
+    camera: CameraService;
     changeScene (scene: Scene): void;
     session: GameSession;
 }

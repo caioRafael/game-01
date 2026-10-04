@@ -57,8 +57,9 @@ export class InputService {
         return this.mouse
     }
 
-    mouseHovering(gameObject: GameObject): boolean {
-        return this.mouse.x >= gameObject.getPosition().x && this.mouse.x <= gameObject.getPosition().x + gameObject.getWidth() && this.mouse.y >= gameObject.getPosition().y && this.mouse.y <= gameObject.getPosition().y + gameObject.getHeight()
+    mouseHovering(gameObject: GameObject, position: { x: number, y: number } = this.mouse): boolean {
+        const objectPosition = gameObject.getPosition()
+        return position.x >= objectPosition.x && position.x <= objectPosition.x + gameObject.getWidth() && position.y >= objectPosition.y && position.y <= objectPosition.y + gameObject.getHeight()
     }
 
     isMousePressed(button: MouseButton): boolean {
