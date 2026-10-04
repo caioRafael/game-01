@@ -1,6 +1,6 @@
 # game-01
 
-Jogo 2D no canvas, escrito em TypeScript. O código é compilado para módulos nativos do navegador, sem bundler. Cenas, objetos, interface, entrada, colisão e desenho ficam separados, e um servidor local recompila o jogo e recarrega a página quando um arquivo muda.
+Jogo 2D no canvas, escrito em TypeScript. O código é compilado para módulos nativos do navegador, sem bundler. Cenas, objetos, interface, entrada, câmera, tilemap e desenho ficam separados, e um servidor local recompila o jogo e recarrega a página quando um arquivo muda.
 
 ## Como rodar
 
@@ -23,25 +23,33 @@ A tela inicial é o menu. Um rótulo fica no canto superior esquerdo e um quadra
 
 Clique no campo para digitar o nome; clique fora para tirar o foco. **Backspace** apaga o último caractere. **New Game** guarda o texto e entra na primeira fase. **Espaço** entra na fase sem guardar o nome, exceto quando o campo está focado: aí a tecla escreve um espaço.
 
-Na primeira fase o fundo é preto. O nome aparece no canto superior direito, como `Player: …`. **Back**, no canto superior esquerdo, volta ao menu. O jogador é o quadrado vermelho e se move com as **setas**. O quadrado azul é sólido: encostar nele cancela o movimento. Passar o mouse sobre ele deixa o quadrado cinza. A colisão é de retângulos alinhados aos eixos.
+Na primeira fase o fundo é preto e a sala é um mapa de tiles. O nome aparece no canto superior direito, como `Player: …`. **Back**, no canto superior esquerdo, volta ao menu. Esses dois widgets ficam fixos na tela. O jogador é o quadrado vermelho, nasce no chão da sala e se move com as **setas**. A câmera o segue e o mantém no centro da vista.
+
+O chão é escuro e atravessável. As paredes são marrons e sólidas: encostar nelas cancela o movimento. A porta azul, no meio da parede de baixo, também é sólida e funciona como gatilho: tentar entrar nela volta ao menu. Passar o mouse sobre a porta pinta esse tile de cinza. A colisão testa os tiles cobertos pelo retângulo do jogador. Fora da grade conta como sólido.
 
 ## Estrutura
 
 | Pasta               | Papel                                       |
 | ------------------- | ------------------------------------------- |
 | `src/core`          | `Game` e o loop de `requestAnimationFrame`  |
-| `src/engine`        | desenho no canvas, teclado, mouse e colisão |
+| `src/engine`        | desenho no canvas, câmera, teclado, mouse, colisão e tilemap |
 | `src/entities`      | `Scene`, sessão, `GameObject` e `Player`    |
-| `src/scenes`        | tela inicial e primeira fase                |
+| `src/scenes`        | tela inicial, primeira fase e o mapa da fase |
 | `src/ui`            | rótulo, botão, painel, campo de texto e âncoras |
 | `src/server`        | servidor de desenvolvimento                 |
 | `src/images/knight` | sprites do cavaleiro                        |
 
 Cada cena implementa `layout`, `update` e `render`. O loop mede o tempo entre quadros, limita o passo a 50 ms, posiciona a interface com o tamanho atual da tela e chama a cena. `GameContext.changeScene` troca a cena; uma cena não substitui a si mesma.
 
-`Game` cria um `GameSession` uma vez e o entrega em `GameContext.session`. O campo de texto guarda só o rascunho. **New Game** copia esse texto para `session.playerName`, e a fase seguinte lê o mesmo objeto. Uma cena nova não leva os widgets da anterior.
+`Game` cria um `GameSession` e uma câmera uma vez e os entrega em `GameContext`. O campo de texto guarda só o rascunho. **New Game** copia esse texto para `session.playerName`, e a fase seguinte lê o mesmo objeto. `changeScene` também zera a câmera. Uma cena nova não leva os widgets da anterior.
 
 A cena atual e o nome do jogador ficam na memória do servidor de desenvolvimento. `changeScene` envia os dois para `/game-state`. Ao recarregar a página, o jogo pede esse estado e reabre a mesma cena, com o mesmo nome. Reiniciar o servidor volta ao menu. Nada disso usa `localStorage`, `sessionStorage` nem cookie.
+
+## Mapa e câmera
+
+O mapa da primeira fase está em `src/scenes/maps/first-fase.map.ts`. Cada célula é um `TileId`: chão, parede ou porta. `TileMap` guarda a grade, converte entre tile e mundo, desenha só os tiles visíveis e responde se um retângulo cobre um tile sólido ou um gatilho.
+
+A câmera tem dois modos. `FIXED` fica parada. `FOLLOW` acompanha um `GameObject` e centraliza o alvo na vista. A primeira fase chama `follow` no jogador. O desenho do mundo usa `apply`, que translada o canvas. A interface é desenhada depois, em coordenadas de tela. `screenToWorld` converte o mouse para o mundo, e é assim que o hover da porta acompanha a câmera. Trocar de cena chama `reset` e volta ao modo fixo na origem.
 
 ## Interface
 
