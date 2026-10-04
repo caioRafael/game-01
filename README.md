@@ -41,6 +41,8 @@ Cada cena implementa `layout`, `update` e `render`. O loop mede o tempo entre qu
 
 `Game` cria um `GameSession` uma vez e o entrega em `GameContext.session`. O campo de texto guarda só o rascunho. **New Game** copia esse texto para `session.playerName`, e a fase seguinte lê o mesmo objeto. Uma cena nova não leva os widgets da anterior.
 
+A cena atual e o nome do jogador ficam na memória do servidor de desenvolvimento. `changeScene` envia os dois para `/game-state`. Ao recarregar a página, o jogo pede esse estado e reabre a mesma cena, com o mesmo nome. Reiniciar o servidor volta ao menu. Nada disso usa `localStorage`, `sessionStorage` nem cookie.
+
 ## Interface
 
 Os widgets são desenhados no mesmo canvas da cena. `Widget` guarda o retângulo e testa se um ponto está dentro dele. A cena cria os widgets, posiciona os que têm âncora em `layout` e chama `update` e `render`.

@@ -1,3 +1,4 @@
+import { SceneId } from "@core/persisted-game";
 import { Key } from "@engine/inputs/key";
 import type { InputService } from "@engine/inputs/input.service";
 import { Scene, type GameContext } from "@entities/scene";
@@ -9,6 +10,8 @@ import { Panel } from "@ui/panel";
 import { Input } from "@ui/input";
 
 export class InitialScene extends Scene {
+    readonly id = SceneId.Initial;
+
     private label: Label;
     // private button: Button;
     private panel: Panel;

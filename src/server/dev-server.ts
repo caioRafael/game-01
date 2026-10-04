@@ -4,6 +4,7 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { tmpdir } from "node:os";
 import * as path from "node:path";
 import process from "node:process";
+import { defaultPersistedGame, parsePersistedGame, type PersistedGame } from "../core/persisted-game";
 
 const root = process.cwd();
 const port = Number(process.env["PORT"]) || 3001;
@@ -95,6 +96,16 @@ function printBrowserLog(body: string) {
   write(`${label} ${message}`);
 }
 
+let storedGame: PersistedGame = { ...defaultPersistedGame };
+
+function readPersistedGame(body: string): PersistedGame | null {
+  try {
+    return parsePersistedGame(JSON.parse(body));
+  } catch {
+    return null;
+  }
+}
+
 const clients = new Set<ServerResponse>();
 let reloadTimer: ReturnType<typeof setTimeout> | undefined;
 let watchingGame = false;
@@ -141,6 +152,24 @@ const server = createServer(async (request, response) => {
     response.writeHead(204);
     response.end();
     return;
+  }
+
+  if (url.pathname === "/game-state") {
+    if (request.method === "GET") {
+      send(response, 200, JSON.stringify(storedGame), "application/json; charset=utf-8");
+      return;
+    }
+    if (request.method === "PUT") {
+      const next = readPersistedGame(await readBody(request));
+      if (!next) {
+        send(response, 400, "Invalid game state", "text/plain; charset=utf-8");
+        return;
+      }
+      storedGame = next;
+      response.writeHead(204);
+      response.end();
+      return;
+    }
   }
 
   if (request.method !== "GET" && request.method !== "HEAD") {

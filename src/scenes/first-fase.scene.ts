@@ -1,3 +1,4 @@
+import { SceneId } from "@core/persisted-game";
 import type { CameraService } from "@engine/camera/camera.service";
 import type { InputService } from "@engine/inputs/input.service";
 import { Scene, type GameContext } from "@entities/scene";
@@ -11,6 +12,8 @@ import { Button, TextAlign } from "@ui/button";
 import { Label } from "@ui/label";
 
 export class FirstFaseScene extends Scene {
+    readonly id = SceneId.FirstFase;
+
     private x = 0;
     private y = 0;
     private placed = false;

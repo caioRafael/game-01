@@ -1,3 +1,4 @@
+import type { SceneId } from "@core/persisted-game";
 import type { InputService } from "@engine/inputs/input.service";
 import type { CameraService } from "@engine/camera/camera.service";
 
@@ -12,6 +13,8 @@ export interface GameContext{
 }
 
 export abstract class Scene {
+    abstract readonly id: SceneId;
+
     layout(_width: number, _height: number): void {}
 
     abstract update(
