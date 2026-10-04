@@ -60,4 +60,13 @@ export class CameraService {
     apply(ctx: CanvasRenderingContext2D): void {
         ctx.translate(-this.x, -this.y);
     }
+
+    getView(): { x: number, y: number, width: number, height: number } {
+        return {
+            x: this.x,
+            y: this.y,
+            width: this.viewWidth,
+            height: this.viewHeight,
+        }
+    }
 }
