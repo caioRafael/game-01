@@ -12,6 +12,8 @@ export class CameraService {
     private viewHeight = 0;
     private node = CameraMode.FIXED;
     private target: GameObject | null = null;
+    private worldWidth = 0;
+    private worldHeight = 0;
     
 
     setViewSize(width: number, height: number): void {
@@ -30,17 +32,33 @@ export class CameraService {
         this.node = CameraMode.FOLLOW;
         this.target = target;
     }
+    
+    setBounds(width: number, height: number): void {
+        this.worldWidth = width;
+        this.worldHeight = height;
+    }
 
     update(): void {
         if(this.node !== CameraMode.FOLLOW || this.target === null) return;
 
         const position = this.target.getPosition();
-        this.x = position.x + this.target.getWidth() / 2 - this.viewWidth / 2;
-        this.y = position.y + this.target.getHeight() / 2 - this.viewHeight / 2;
+        const desiredX = position.x + this.target.getWidth() / 2 - this.viewWidth / 2;
+        const desiredY = position.y + this.target.getHeight() / 2 - this.viewHeight / 2;
+        this.x = this.place(desiredX, this.worldWidth, this.viewWidth);
+        this.y = this.place(desiredY, this.worldHeight, this.viewHeight);    
     }
 
     reset(): void {
+        this.worldWidth = 0;
+        this.worldHeight = 0;
         this.setFixed(0, 0);
+    }
+
+    private place(desired: number, worldSize: number, viewSize: number): number {
+        if (worldSize <= 0) return desired;
+        if (worldSize <= viewSize) return (worldSize - viewSize) / 2;
+        const max = worldSize - viewSize;
+        return Math.min(Math.max(desired, 0), max);
     }
 
     worldToScreen(x: number, y: number): { x: number, y: number } {

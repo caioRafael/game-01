@@ -170,6 +170,8 @@ export class FirstFaseScene extends Scene {
     update(dt: number, input: InputService, game: GameContext): void {
         this.camera = game.camera;
         this.camera.setViewSize(this.viewWidth, this.viewHeight);
+        this.camera.setViewSize(this.viewWidth, this.viewHeight);
+        this.camera.setBounds(this.map.getWidth(), this.map.getHeight());
 
         this.label.setText(`Player: ${game.session.playerName}`);
         this.backButton.setOnClick(() => {
