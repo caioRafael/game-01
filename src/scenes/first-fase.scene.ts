@@ -195,9 +195,26 @@ export class FirstFaseScene extends Scene {
         const height = this.player.getHeight();
         const enteredTrigger = this.map.overlapsTrigger(attempted.x, attempted.y, width, height);
 
-        if (this.map.overlapsSolid(attempted.x, attempted.y, width, height)) {
-            this.player.setPosition(previous.x, previous.y);
+        let x = attempted.x;
+        let y = previous.y;
+        if (this.map.overlapsSolid(x, y, width, height)) {
+            x = previous.x;
         }
+
+        y = attempted.y;
+        if (this.map.overlapsSolid(x, y, width, height)) {
+            y = previous.y;
+        }
+
+        this.player.setPosition(x, y);
+        
+        if (this.map.overlapsTrigger(attempted.x, attempted.y, width, height) || this.map.overlapsTrigger(x, y, width, height)) {
+            game.changeScene(new InitialScene());
+            return;
+        }
+        // if (this.map.overlapsSolid(attempted.x, attempted.y, width, height)) {
+        //     this.player.setPosition(previous.x, previous.y);
+        // }
         if (enteredTrigger) {
             game.changeScene(new InitialScene());
             return;
