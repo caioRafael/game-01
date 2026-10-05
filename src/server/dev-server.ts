@@ -15,6 +15,11 @@ const contentTypes = new Map([
   [".js", "text/javascript; charset=utf-8"],
   [".css", "text/css; charset=utf-8"],
   [".map", "application/json; charset=utf-8"],
+  [".png", "image/png"],
+  [".jpg", "image/jpeg"],
+  [".jpeg", "image/jpeg"],
+  [".webp", "image/webp"],
+  [".gif", "image/gif"],
 ]);
 
 const logScript = `
@@ -63,6 +68,15 @@ function distFile(pathname: string) {
   const relative = decodeURIComponent(pathname.slice("/dist/".length));
   const filePath = path.resolve(distRoot, relative);
   if (filePath !== distRoot && !filePath.startsWith(distRoot + path.sep)) return null;
+  if (!existsSync(filePath) || !statSync(filePath).isFile()) return null;
+  return filePath;
+}
+
+function imageFile(pathname: string) {
+  const relative = decodeURIComponent(pathname.slice("/images/".length));
+  const imagesRoot = path.resolve(root, "src/images");
+  const filePath = path.resolve(imagesRoot, relative);
+  if (filePath !== imagesRoot && !filePath.startsWith(imagesRoot + path.sep)) return null;
   if (!existsSync(filePath) || !statSync(filePath).isFile()) return null;
   return filePath;
 }
@@ -184,6 +198,17 @@ const server = createServer(async (request, response) => {
 
   if (url.pathname.startsWith("/dist/")) {
     const filePath = distFile(url.pathname);
+    if (!filePath) {
+      send(response, 404, "Not found", "text/plain; charset=utf-8");
+      return;
+    }
+    const type = contentTypes.get(path.extname(filePath)) ?? "application/octet-stream";
+    send(response, 200, readFileSync(filePath), type);
+    return;
+  }
+
+  if (url.pathname.startsWith("/images/")) {
+    const filePath = imageFile(url.pathname);
     if (!filePath) {
       send(response, 404, "Not found", "text/plain; charset=utf-8");
       return;
