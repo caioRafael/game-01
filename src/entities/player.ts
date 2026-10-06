@@ -8,6 +8,7 @@ type Facing = "down" | "up" | "left" | "right";
 
 export class Player extends GameObject {
     private readonly speed = 240;
+    private readonly drawScale = 2;
     private readonly sprite: Sprite;
     private facing: Facing = "down";
     private held = { left: false, right: false, up: false, down: false };
@@ -47,7 +48,11 @@ export class Player extends GameObject {
 
     render(ctx: CanvasRenderingContext2D) {
         const position = this.getPosition();
-        const drawn = this.sprite.render(ctx, position.x, position.y, this.getWidth(), this.getHeight());
+        const width = this.getWidth() * this.drawScale;
+        const height = this.getHeight() * this.drawScale;
+        const x = position.x - (width - this.getWidth()) / 2;
+        const y = position.y - (height - this.getHeight());
+        const drawn = this.sprite.render(ctx, x, y, width, height);
         if (!drawn) super.render(ctx);
     }
 }

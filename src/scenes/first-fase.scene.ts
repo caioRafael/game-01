@@ -130,8 +130,8 @@ import { SceneId } from "@core/persisted-game";
 import type { CameraService } from "@engine/camera/camera.service";
 import type { InputService } from "@engine/inputs/input.service";
 import { Scene, type GameContext } from "@entities/scene";
-import { knightSheet } from "@entities/knight.sheet";
 import { Player } from "@entities/player";
+import { teenSheet } from "@entities/teen.sheet";
 import { InitialScene } from "./initial.scene";
 import { Anchor } from "@ui/anchor";
 import { Button, TextAlign } from "@ui/button";
@@ -158,7 +158,7 @@ export class FirstFaseScene extends Scene {
     constructor() {
         super();
         const spawn = this.map.tileToWorld(firstFaseSpawn.column, firstFaseSpawn.row);
-        this.player = new Player(spawn.x, spawn.y, 60, 60, knightSheet);
+        this.player = new Player(spawn.x, spawn.y, 64, 64, teenSheet);
     }
 
     layout(width: number, height: number): void {
