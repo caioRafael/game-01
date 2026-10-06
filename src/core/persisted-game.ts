@@ -1,5 +1,6 @@
 export const SceneId = {
     Initial: "initial",
+    InitialMap: "initial-map",
     FirstFase: "first-fase",
 } as const;
 

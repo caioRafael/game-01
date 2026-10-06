@@ -2,7 +2,7 @@ import { SceneId } from "@core/persisted-game";
 import { Key } from "@engine/inputs/key";
 import type { InputService } from "@engine/inputs/input.service";
 import { Scene, type GameContext } from "@entities/scene";
-import { FirstFaseScene } from "./first-fase.scene";
+import { InitialMapScene } from "./initial-map.scene.js";
 import { Anchor } from "@ui/anchor";
 import { Label } from "@ui/label";
 import { Button } from "@ui/button";
@@ -37,7 +37,7 @@ export class InitialScene extends Scene {
 
     update(_dt: number, input: InputService, game: GameContext): void {
         if (input.isPressed(Key.SPACE) && !this.textInput.isFocused()) {
-            game.changeScene(new FirstFaseScene());
+            game.changeScene(new InitialMapScene());
         }
         if (input.isPressed(Key.LEFT)) {
             game.changeScene(new InitialScene());
@@ -48,7 +48,7 @@ export class InitialScene extends Scene {
 
         this.button2.setOnClick(() => {
             game.session.playerName = this.textInput.getValue();
-            game.changeScene(new FirstFaseScene());
+            game.changeScene(new InitialMapScene());
             console.log(this.textInput.getValue());
         });
         // this.button.update(input);

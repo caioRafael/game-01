@@ -63,20 +63,20 @@ export class CameraService {
 
     worldToScreen(x: number, y: number): { x: number, y: number } {
         return {
-            x: x - this.x, 
-            y: y - this.y,
+            x: x - Math.round(this.x),
+            y: y - Math.round(this.y),
         }
     }
 
     screenToWorld(x: number, y: number): { x: number, y: number } {
         return {
-            x: x + this.x, 
-            y: y + this.y,
+            x: x + Math.round(this.x),
+            y: y + Math.round(this.y),
         }
     }
 
     apply(ctx: CanvasRenderingContext2D): void {
-        ctx.translate(-this.x, -this.y);
+        ctx.translate(-Math.round(this.x), -Math.round(this.y));
     }
 
     getView(): { x: number, y: number, width: number, height: number } {

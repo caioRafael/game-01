@@ -1,4 +1,5 @@
-import { tileDefinitions, type TileDefinition, type TileId } from "./tile";
+import type { ImageSheet } from "../sprite/image-sheet";
+import { tileDefinitions, type TileCatalog, type TileDefinition, type TileId } from "./tile";
 
 export class TileMap {
     private readonly cells: number[];
@@ -8,6 +9,8 @@ export class TileMap {
         private readonly rows: number,
         private readonly tileSize: number,
         rowsData: number[][],
+        private readonly definitions: TileCatalog | null = null,
+        private readonly sheet: ImageSheet | null = null,
     ) {
         this.cells = rowsData.flat();
     }
@@ -40,8 +43,10 @@ export class TileMap {
 
     getTile(column: number, row: number): TileDefinition | null {
         if (column < 0 || row < 0 || column >= this.columns || row >= this.rows) return null;
-        const id = this.cells[row * this.columns + column] as TileId;
-        return tileDefinitions[id] ?? null;
+        const id = this.cells[row * this.columns + column];
+        if (id === undefined) return null;
+        if (this.definitions) return this.definitions[id] ?? null;
+        return tileDefinitions[id as TileId] ?? null;
     }
 
     isSolid(column: number, row: number): boolean {
@@ -76,6 +81,19 @@ export class TileMap {
                 const tile = this.getTile(column, row);
                 if (tile === null) continue;
                 const position = this.tileToWorld(column, row);
+                const sprite = tile.sprite;
+                const drawn = sprite !== undefined && (this.sheet?.draw(
+                    ctx,
+                    sprite.column * this.tileSize,
+                    sprite.row * this.tileSize,
+                    this.tileSize,
+                    this.tileSize,
+                    position.x,
+                    position.y,
+                    this.tileSize,
+                    this.tileSize,
+                ) ?? false);
+                if (drawn) continue;
                 ctx.fillStyle = tile.color;
                 ctx.fillRect(position.x, position.y, this.tileSize, this.tileSize);
             }

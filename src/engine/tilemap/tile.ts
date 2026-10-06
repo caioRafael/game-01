@@ -7,11 +7,14 @@ export const TileId = {
 export type TileId = (typeof TileId)[keyof typeof TileId];
 
 export interface TileDefinition {
-    id: TileId;
+    id: number;
     color: string;
     solid: boolean;
     trigger: boolean;
+    sprite?: { column: number; row: number };
 }
+
+export type TileCatalog = { readonly [id: number]: TileDefinition | undefined };
 
 export const tileDefinitions: Record<TileId, TileDefinition> = {
     [TileId.Floor]: {
