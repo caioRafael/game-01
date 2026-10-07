@@ -17,6 +17,9 @@ function pieceColor(name: string): string {
 }
 
 export class House extends GameObject {
+    private readonly spriteX: number;
+    private readonly spriteY: number;
+
     constructor(private readonly plan: HousePlan, column: number, row: number) {
         const widthInTiles = plan.rows[0]?.length ?? 0;
         if (widthInTiles === 0) throw new Error(`Casa sem peças: ${plan.name}`);
@@ -26,7 +29,13 @@ export class House extends GameObject {
         if (plan.doorColumn < 0 || plan.doorColumn >= widthInTiles || plan.doorRow < 0 || plan.doorRow + 1 >= plan.rows.length) {
             throw new Error(`Porta fora da casa: ${plan.name}`);
         }
-        super(column * nordesteTileSize, row * nordesteTileSize, widthInTiles * nordesteTileSize, plan.rows.length * nordesteTileSize, "#f0e2c4");
+        const spriteX = column * nordesteTileSize;
+        const spriteY = row * nordesteTileSize;
+        const width = widthInTiles * nordesteTileSize;
+        const spriteHeight = plan.rows.length * nordesteTileSize;
+        super(spriteX, spriteY + spriteHeight - nordesteTileSize, width, nordesteTileSize, "#f0e2c4");
+        this.spriteX = spriteX;
+        this.spriteY = spriteY;
     }
 
     getName(): string {
@@ -38,10 +47,9 @@ export class House extends GameObject {
     }
 
     doorBounds(): { x: number; y: number; width: number; height: number } {
-        const position = this.getPosition();
         return {
-            x: position.x + this.plan.doorColumn * nordesteTileSize,
-            y: position.y + this.plan.doorRow * nordesteTileSize,
+            x: this.spriteX + this.plan.doorColumn * nordesteTileSize,
+            y: this.spriteY + this.plan.doorRow * nordesteTileSize,
             width: nordesteTileSize,
             height: nordesteTileSize * 2,
         };
@@ -64,12 +72,11 @@ export class House extends GameObject {
     }
 
     render(ctx: CanvasRenderingContext2D, highlighted = false): void {
-        const origin = this.getPosition();
         this.plan.rows.forEach((line, row) => {
             line.forEach((name, column) => {
                 const cell = kitCell(name);
-                const x = origin.x + column * nordesteTileSize;
-                const y = origin.y + row * nordesteTileSize;
+                const x = this.spriteX + column * nordesteTileSize;
+                const y = this.spriteY + row * nordesteTileSize;
                 const drawn = houseSheet.draw(
                     ctx,
                     cell.column * nordesteTileSize,

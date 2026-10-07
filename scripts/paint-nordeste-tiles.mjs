@@ -517,20 +517,28 @@ function paintBalcony(p) {
     for (let x = 3; x < 13; x += 2) p.vline(x, 11, 4, C.woodL);
 }
 
+function paintDoorLeaf(p, y, h, door, doorL, doorD) {
+    p.fill(1, y, 14, h, doorD);
+    p.fill(2, y, 12, h, door);
+    p.vline(2, y, h, doorL);
+    p.vline(8, y, h, doorD);
+}
+
 function paintDoor(p, wall, door, doorL, doorD, part, adobe = false) {
     if (adobe) paintAdobe(p, "c");
     else p.fill(0, 0, 16, 16, wall);
     if (part === "top") {
-        p.fill(3, 2, 10, 2, C.woodD);
-        p.fill(4, 4, 8, 12, doorD);
-        p.fill(5, 4, 6, 12, door);
-        p.vline(5, 4, 12, doorL);
+        p.fill(1, 0, 14, 3, C.woodD);
+        p.hline(1, 3, 14, C.ink);
+        paintDoorLeaf(p, 4, 12, door, doorL, doorD);
+        p.hline(2, 9, 6, doorD);
+        p.hline(9, 9, 6, doorD);
     } else {
-        p.fill(4, 0, 8, 12, doorD);
-        p.fill(5, 0, 6, 12, door);
-        p.vline(5, 0, 12, doorL);
-        p.px(10, 7, C.gold);
-        p.fill(3, 11, 10, 2, C.stoneL);
+        paintDoorLeaf(p, 0, 12, door, doorL, doorD);
+        p.hline(2, 5, 6, doorD);
+        p.hline(9, 5, 6, doorD);
+        p.px(12, 6, C.gold);
+        p.fill(1, 12, 14, 1, C.stoneL);
         p.fill(0, 13, 16, 2, C.stoneD);
         p.hline(0, 15, 16, C.ink);
     }
