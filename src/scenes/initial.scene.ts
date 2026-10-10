@@ -8,15 +8,15 @@ import { Label } from "@ui/label";
 import { Button } from "@ui/button";
 import { Panel } from "@ui/panel";
 import { Input } from "@ui/input";
+import { FirstFaseScene } from "./first-fase.scene.js";
 
 export class InitialScene extends Scene {
     readonly id = SceneId.Initial;
 
     private label: Label;
-    // private button: Button;
     private panel: Panel;
     private label2: Label;
-    private button2: Button;
+    private button: Button;
     private textInput: Input;
 
     constructor() {
@@ -26,12 +26,12 @@ export class InitialScene extends Scene {
         // this.button = new Button(100, 300, 200, 50, "New Game", "16px Arial", "white", "blue");
         this.panel = new Panel(0, 0, 600, 200, "red");
         this.panel.setAnchor(Anchor.BOTTOM_CENTER, 0, -32);
-        this.button2 = new Button(100, 100, 200, 50, "New Game", "16px Arial", "white", "blue");
+        this.button = new Button(100, 100, 200, 50, "New Game", "16px Arial", "white", "blue");
         this.label2 = new Label(20, 50, 200, 50, "Hello, World!");
         this.textInput = new Input(0, 0, 200, 40);
         this.textInput.setAnchor(Anchor.TOP_RIGHT, -16, 16);
         this.panel.addChild(this.label2);
-        this.panel.addChild(this.button2);
+        this.panel.addChild(this.button);
         this.panel.addChild(this.textInput);
     }
 
@@ -46,9 +46,9 @@ export class InitialScene extends Scene {
         //     game.changeScene(new FirstFaseScene());
         // });
 
-        this.button2.setOnClick(() => {
+        this.button.setOnClick(() => {
             game.session.playerName = this.textInput.getValue();
-            game.changeScene(new InitialMapScene());
+            game.changeScene(new FirstFaseScene());
             console.log(this.textInput.getValue());
         });
         // this.button.update(input);
